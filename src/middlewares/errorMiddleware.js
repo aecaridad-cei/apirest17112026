@@ -1,4 +1,4 @@
-// Middleware 404: se ejecuta si ninguna ruta anterior atendio la peticion
+// Middleware 404: se ejecuta si ninguna ruta anterior atendió la petición.
 const notFound = (req, res, next) => {
   res.status(404).json({
     success: false,
@@ -7,21 +7,23 @@ const notFound = (req, res, next) => {
   });
 };
 
-// Middleware de errores de express: recibe los errores enviados con next(error) y mantiene un formato json comun para las respuestas del error
-
+// Middleware de errores de Express: recibe los errores enviados con next(error)
+// y mantiene un formato JSON común para las respuestas de error.
 const errorHandler = (err, req, res, next) => {
-  // Si el error no especifica estado, se trata como un fallo interno (500)
+  console.error("Error detectado:", err.message);
+
+  // Si el error no especifica estado, se trata como un fallo interno (500).
   let statusCode = err.statusCode || 500;
   let message = err.message || "Error interno del servidor";
 
-  // Mongoose genera CastError cuando no puede convertir un valor al tipo esperado
-  // ejemplo: cuando el parametro id: no tiene formato valido
+  // Mongoose genera CastError cuando no puede convertir un valor al tipo esperado,
+  // por ejemplo, cuando el parámetro :id no tiene formato válido.
   if (err.name === "CastError") {
     statusCode = 400;
-    message = `Formato de ID invalido: ${err.value}`;
+    message = `Formato de ID inválido: ${err.value}`;
   }
 
-  //   Validation error agrupa los incumplimientos del esquema (require, enum, min)
+  // ValidationError agrupa los incumplimientos del esquema (required, enum, min, etc.).
   if (err.name === "ValidationError") {
     statusCode = 400;
     message = Object.values(err.errors)
@@ -30,11 +32,11 @@ const errorHandler = (err, req, res, next) => {
   }
 
   res.status(statusCode).json({
-    succes: false,
+    success: false,
     error: statusCode === 500 ? "Internal Server Error" : "Bad Request",
     message: message,
   });
 };
 
-// Exportaciones con nombre para poder usarlos en el orden correcto
+// Exportaciones con nombre para que la aplicación monte ambos middlewares en el orden correcto.
 export { notFound, errorHandler };

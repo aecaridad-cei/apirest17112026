@@ -29,12 +29,11 @@ const getProductById = async (req, res, next) => {
         success: false,
         message: "Producto no encontrado con ese ID",
       });
-
-      res.status(200).json({
-        success: true,
-        data: product,
-      });
     }
+    res.status(200).json({
+      success: true,
+      data: product,
+    });
   } catch (error) {
     next(error);
   }

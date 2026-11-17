@@ -100,3 +100,11 @@ const deleteProduct = async (req, res, next) => {
             next(error)
         }
 }
+
+export {
+    getAllProducts,
+    getProductById,
+    createProduct,
+    updateProduct,
+    deleteProduct
+}

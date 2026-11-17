@@ -1,7 +1,5 @@
-import req from "express/lib/request";
 import Product from "../models/Product";
 import User from "../models/User";
-import res from "express/lib/response";
 
 // Los controladores implementan cada operacion HTTP y traducen el resultado en un JSON
 // Los errores de mongoose se pasan al middleware central mediante next(error)
@@ -45,7 +43,7 @@ const getProductById = async (req, res, next) => {
 const createProduct = async (req, res, next) => {
   try {
     const newProduct = await Product.create(req.body);
-    res.status(200).json({
+    res.status(201).json({
       success: true,
       message: "Producto Creado con exito",
       data: newProduct,
@@ -58,13 +56,13 @@ const createProduct = async (req, res, next) => {
 // PUT /api/product/:id actualiza los campos enviados y devuelve el documento nuevo
 const updateProduct = async (req, res, next) => {
   try {
-    const updateProduct = await Product.findByIdAndUpdate(
+    const updatedProduct = await Product.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true, runValidators: true },
       // Devuelve el objeto actualizado y aplica validaciones del esquema
     );
-    if (!updateProduct) {
+    if (!updatedProduct) {
       return res.status(404).json({
         success: false,
         message: "No se pudo actualizar: Producto no encontrado",
@@ -73,7 +71,7 @@ const updateProduct = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "Producto actualizado correctamente",
-      data: updateProduct,
+      data: updatedProduct,
     });
   } catch (error) {
     next(error);
@@ -83,9 +81,9 @@ const updateProduct = async (req, res, next) => {
 // DELETE /api/products/:id elimina el producto y devuelve el docuemento eliminado
 const deleteProduct = async (req, res, next) => {
   try {
-    const deleteProduct = await Product.findByIdAndDelete(req.params.id);
+    const deletedProduct = await Product.findByIdAndDelete(req.params.id);
 
-    if (!deleteProduct) {
+    if (!deletedProduct) {
       return res.status(404).json({
         success: false,
         message: "No se pudo eliminar: Producto no encontrado",
@@ -95,7 +93,16 @@ const deleteProduct = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "Producto eliminado correctamente",
-      data: deleteProduct,
+      data: deletedProduct,
     });
   } catch (error) {}
+};
+
+// Exportaciones con nombre: el router importa explicitamente cada controlador que utiliza.
+export {
+  getAllProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct,
 };

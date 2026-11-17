@@ -1,6 +1,7 @@
 import req from "express/lib/request";
 import Product from "../models/Product";
 import User from "../models/User";
+import res from "express/lib/response";
 
 // Los controladores implementan cada operacion HTTP y traducen el resultado en un JSON
 // Los errores de mongoose se pasan al middleware central mediante next(error)
@@ -77,4 +78,24 @@ const updateProduct = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+// DELETE /api/products/:id elimina el producto y devuelve el docuemento eliminado
+const deleteProduct = async (req, res, next) => {
+  try {
+    const deleteProduct = await Product.findByIdAndDelete(req.params.id);
+
+    if (!deleteProduct) {
+      return res.status(404).json({
+        success: false,
+        message: "No se pudo eliminar: Producto no encontrado",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Producto eliminado correctamente",
+      data: deleteProduct,
+    });
+  } catch (error) {}
 };

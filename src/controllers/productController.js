@@ -38,3 +38,17 @@ const getProductById = async (req, res, next) => {
     next(error);
   }
 };
+
+// POST /api/products crea un producto con los datos enviados en el cuerpo de JSON
+const createProduct = async (req, res, next) => {
+  try {
+    const newProduct = await Product.create(req.body);
+    res.status(200).json({
+      success: true,
+      message: "Producto Creado con exito",
+      data: newProduct,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

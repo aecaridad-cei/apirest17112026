@@ -1,47 +1,85 @@
-// Cargar el .env al importar este modulo, antes de leer MONGODBGUIR
+<<<<<<< HEAD
+import "dotenv/config"
+import express from "express"
+import cors from "cors"
+import connectDB from "./config/db.js"
+import productRoutes from "./routes/productRoutes.js"
+import { notFound, errorHandler } from "./middleware/errorMiddleware.js"
+
+const app = express()
+
+connectDB()
+
+app.use(cors())
+app.use(express.json())
+
+app.get("/", (req, res) => {
+    res.status(200).json({
+        success: true,
+        message: "Api Restfull Operativa y conectada a MongoDB Atlas",
+        endpoint: { products: "/api/products" }
+    })
+})
+
+app.use("/api/products", productRoutes)
+
+app.use(notFound)
+app.use(errorHandler)
+
+const PORT = process.env.PORT || 3000
+if (process.env.NODE_ENV !== "production") {
+    app.listen(PORT, () => {
+        console.log('Servidor ejecutandose en localhost')
+    })
+}
+=======
+// Carga .env al importar este módulo, antes de leer MONGODB_URI o PORT.
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import connectDB from "./src/config/db.js";
 import productRoutes from "./src/routes/productRoutes.js";
-import { notFound, errorHandler } from "./src/middlewares/errorMiddleware";
+import { notFound, errorHandler } from "./src/middlewares/errorMiddleware.js";
 
-// Crear la aplicacion de express; en este archivo se conectan sus piezas principales
+// Crea la aplicación de Express; en este archivo se conectan sus piezas principales.
 const app = express();
 
-// Inicio la conexion a la base de datos usando la configuracion del entorno
+// Inicia la conexión a la base de datos usando la configuración del entorno.
 connectDB();
 
-// Los middlewares procesan cada peticion antes que llegue a una ruta
-// CORS permite solicitudes desde otros origenes y express.json interpreta cuerpos json
+// Los middlewares procesan cada petición antes de que llegue a una ruta.
+// CORS permite solicitudes desde otros orígenes y express.json interpreta cuerpos JSON.
 app.use(cors());
 app.use(express.json());
 
-// EndPoint de comprobacion: informa que el servidor is alive.
+// Endpoint de comprobación: informa que el servidor está activo y qué recurso ofrece.
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,
-    message: "Api Restfull Operativa y conectada a Atlas DB",
+    message: "API RESTful operativa y conectada a MongoDB Atlas",
     endpoints: {
-      products: "api/products",
+      products: "/api/products",
     },
   });
 });
 
-// Todas las rutas de productos queden agrupadas bajo el prefijo /api/products
+// Todas las rutas de productos quedan agrupadas bajo el prefijo /api/products.
 app.use("/api/products", productRoutes);
 
-// Esto se coloca despues de las rutas: primero detectamos endpoints que no existen
-// luego se centraliza el tratamiento de los errores con next(error)
+// Se colocan después de las rutas: primero se detectan endpoints inexistentes
+// y luego se centraliza el tratamiento de los errores enviados con next(error).
 app.use(notFound);
 app.use(errorHandler);
 
-// En local o desarrollo, si inician un servidor HTTP usamos el local con puerto o importamos los datos de vercel
+// En desarrollo se inicia un servidor HTTP local; en producción la plataforma
+// (por ejemplo, Vercel) importa la exportación por defecto de este módulo.
 const PORT = process.env.PORT || 3000;
 if (process.env.NODE_ENV !== "production") {
   app.listen(PORT, () => {
-    console.log(`Servidor ejecutandose en localhost`);
+    console.log(`Servidor ejecutándose en http://localhost:${PORT}`);
   });
 }
 
+// La exportación por defecto permite que la plataforma de despliegue importe la aplicación.
 export default app;
+>>>>>>> b4d6ebd8e35972e6cebcb49dd468edabdf56d3e0

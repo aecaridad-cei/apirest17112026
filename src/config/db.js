@@ -1,21 +1,21 @@
 import mongoose from "mongoose";
 
-// Abre la conexion compartida de mongoose con MongoDB Atlas
+// Abre la conexión compartida de Mongoose con MongoDB Atlas.
 const connectDB = async () => {
   try {
-    // Evitamos abrir otra conexion si Mongoose ya esta conectando o conectado
+    // Evita abrir otra conexión si Mongoose ya está conectando o conectado.
     if (mongoose.connection.readyState >= 1) {
       return;
     }
-    // MONGODB_URI se obtiene del entorno .env bien de local o del vercel cuando hagamos deploy
+    // MONGODB_URI se obtiene del entorno; así no se guarda la credencial en el código.
     const conn = await mongoose.connect(process.env.MONGODB_URI);
-    console.log(`MongoDB Atlas conectando en: ${conn.connection.host}`);
+    console.log(`MongoDB Atlas conectado en: ${conn.connection.host}`);
   } catch (error) {
-    console.error(`Error de conexion a MongoDB: ${error.message}`);
-
-    // Sin base de datos la API no puede atender
+    console.error(`Error de conexión a MongoDB: ${error.message}`);
+    // Sin base de datos la API no puede atender sus operaciones principales.
     process.exit(1);
   }
 };
 
+// Exportación por defecto: el archivo principal importa esta función para iniciar la conexión.
 export default connectDB;

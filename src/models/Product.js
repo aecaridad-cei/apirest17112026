@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+// El esquema define los campos, tipos y reglas que debe cumplir cada producto.
 const productSchema = new mongoose.Schema(
   {
     name: {
@@ -27,11 +28,9 @@ const productSchema = new mongoose.Schema(
       enum: ["hardware", "perifericos", "software", "accesorios"],
     },
   },
-  {
-    // Mongoose agrega el createdat y el updatel y omite el campo inter __v
-    timestamps: true,
-    versionKey: false,
-  },
+  // Mongoose agrega createdAt/updatedAt y omite el campo interno __v.
+  { timestamps: true, versionKey: false },
 );
 
+// Exportación por defecto del modelo que utilizan los controladores de productos.
 export default mongoose.model("Product", productSchema);

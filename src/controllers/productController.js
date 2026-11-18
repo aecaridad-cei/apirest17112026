@@ -1,10 +1,11 @@
-import Product from "../models/Product";
-import User from "../models/User";
+import Product from "../models/Product.js";
+// Importar el modelo lo registra en Mongoose, aunque este controlador aún no gestione usuarios.
+import "../models/User.js";
 
-// Los controladores implementan cada operacion HTTP y traducen el resultado en un JSON
-// Los errores de mongoose se pasan al middleware central mediante next(error)
+// Los controladores implementan cada operación HTTP y traducen su resultado a JSON.
+// Los errores de Mongoose se pasan al middleware central mediante next(error).
 
-// Get /api/products - Obtener todos los productos
+// GET /api/products: devuelve todos los productos, del más reciente al más antiguo.
 const getAllProducts = async (req, res, next) => {
   try {
     const products = await Product.find().sort({ createdAt: -1 });
@@ -18,9 +19,7 @@ const getAllProducts = async (req, res, next) => {
   }
 };
 
-// GET /api/products/:id busca un producto por su identificador
-// detalle de un un producto
-
+// GET /api/products/:id: busca un producto por el identificador de MongoDB.
 const getProductById = async (req, res, next) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -39,13 +38,13 @@ const getProductById = async (req, res, next) => {
   }
 };
 
-// POST /api/products crea un producto con los datos enviados en el cuerpo de JSON
+// POST /api/products: crea un producto con los datos enviados en el cuerpo JSON.
 const createProduct = async (req, res, next) => {
   try {
     const newProduct = await Product.create(req.body);
     res.status(201).json({
       success: true,
-      message: "Producto Creado con exito",
+      message: "Producto creado correctamente",
       data: newProduct,
     });
   } catch (error) {
@@ -53,21 +52,22 @@ const createProduct = async (req, res, next) => {
   }
 };
 
-// PUT /api/product/:id actualiza los campos enviados y devuelve el documento nuevo
+// PUT /api/products/:id: actualiza los campos enviados y devuelve el documento nuevo.
 const updateProduct = async (req, res, next) => {
   try {
     const updatedProduct = await Product.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true, runValidators: true },
-      // Devuelve el objeto actualizado y aplica validaciones del esquema
+      { new: true, runValidators: true }, // Devuelve el objeto actualizado y aplica validaciones del esquema
     );
+
     if (!updatedProduct) {
       return res.status(404).json({
         success: false,
         message: "No se pudo actualizar: Producto no encontrado",
       });
     }
+
     res.status(200).json({
       success: true,
       message: "Producto actualizado correctamente",
@@ -78,7 +78,7 @@ const updateProduct = async (req, res, next) => {
   }
 };
 
-// DELETE /api/products/:id elimina el producto y devuelve el docuemento eliminado
+// DELETE /api/products/:id: elimina el producto y devuelve el documento eliminado.
 const deleteProduct = async (req, res, next) => {
   try {
     const deletedProduct = await Product.findByIdAndDelete(req.params.id);
@@ -95,10 +95,12 @@ const deleteProduct = async (req, res, next) => {
       message: "Producto eliminado correctamente",
       data: deletedProduct,
     });
-  } catch (error) {}
+  } catch (error) {
+    next(error);
+  }
 };
 
-// Exportaciones con nombre: el router importa explicitamente cada controlador que utiliza.
+// Exportaciones con nombre: el router importa explícitamente cada controlador que utiliza.
 export {
   getAllProducts,
   getProductById,
